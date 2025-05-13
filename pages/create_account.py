@@ -3,6 +3,7 @@ import sqlite3
 from startup import is_empty
 from db import get_connection
 import config
+from time import sleep
 
 account_form = st.form(key="account")
 name = account_form.text_input("Name", placeholder="John Smith")
@@ -28,9 +29,12 @@ if create:
                 conn.commit()
                 config.current_user = username
                 st.success("Created your new account!")
+                with st.spinner("Logging in..."):
+                    sleep(5)
+                st.switch_page("pages/home.py")
             except sqlite3.IntegrityError as e:
                 error_msg = str(e)
                 if "Accounts.username" in error_msg:
                     st.error("That username is already in use.")
-                if "Accounts.profile_pic" in error_msg:
+                elif "Accounts.profile_pic" in error_msg:
                     st.error("That profile picture is already in use.")
