@@ -1,3 +1,2 @@
-config.toml
 *.db
 __pycache__/*

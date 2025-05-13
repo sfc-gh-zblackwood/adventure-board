@@ -2,6 +2,7 @@ import streamlit as st
 import sqlite3
 from db import get_connection
 import config
+import time
 
 def create_post():
     post_form = st.form(key="post")
@@ -17,5 +18,14 @@ def create_post():
             st.success("Post created!")
 
 st.write(f"Welcome, {config.current_user}")
+
+sb = st.sidebar
+profile = sb.page_link("startup.py", label="Profile")
+log_out = sb.button("Log out")
+if log_out:
+    config.current_user = None
+    with st.spinner("Logging out..."):
+        time.sleep(5)
+    st.switch_page("startup.py")
 
 # display posts as a table for now using a SELECT FROM query

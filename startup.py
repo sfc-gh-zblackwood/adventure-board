@@ -11,10 +11,19 @@ st.set_page_config(
 def is_empty(widget):
     return widget is None or len(widget) == 0 or widget.isspace()
 
-st.page_link("pages/login.py", label="Login", icon="🔐")
-st.write("or")
-st.page_link("pages/create_account.py", label="Create an account", icon="📝")
-st.write("to access the website")
+with st.container(border=True):
+    col1, col2, col3 = st.columns([0.2, 0.6, 0.2])
+    with col2:
+        login_button = st.button("Login", type="primary", use_container_width=True)
+        st.button("or", type="tertiary", use_container_width=True)
+        create_account_button = st.button("Create an account", use_container_width=True)
+        st.button("to access Adventure Board", type="tertiary", use_container_width=True)
+
+    if login_button:
+        st.switch_page("pages/login.py")
+    
+    if create_account_button:
+        st.switch_page("pages/create_account.py")
 
 with get_connection() as conn:
     cursor = conn.cursor()
