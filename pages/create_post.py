@@ -2,6 +2,10 @@ import streamlit as st
 import sqlite3
 from db import get_connection
 
+st.set_page_config(
+    page_title="Create new post - Adventure Board"
+)
+
 post_form = st.form(key="post")
 title = post_form.text_input("Title", max_chars=50)
 date = post_form.date_input("Date")

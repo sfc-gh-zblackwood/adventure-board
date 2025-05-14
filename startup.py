@@ -4,7 +4,7 @@ import sqlite3
 from time import sleep
 
 st.set_page_config(
-    page_title="Log in to Adventure Board"
+    page_title="Log in or create an account to see Adventure Board"
 )
 
 if "current_user" not in st.session_state:

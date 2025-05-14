@@ -5,6 +5,11 @@ from time import sleep
 if "confirm_delete" not in st.session_state:
     st.session_state.confirm_delete = False
 
+st.set_page_config(
+    page_title=f"{st.session_state.current_user}'s Profile - Adventure Board"
+)
+
+
 def delete_account():
     with get_connection() as conn:
         cursor = conn.cursor()

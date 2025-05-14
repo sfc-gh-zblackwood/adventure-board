@@ -7,6 +7,10 @@ import datetime
 if st.session_state.current_user is None:
     st.switch_page("startup.py")
 
+st.set_page_config(
+    page_title="Adventure Board"
+)
+
 st.write(f"Welcome, {st.session_state.current_user}")
 
 sb = st.sidebar
@@ -30,7 +34,7 @@ with get_connection() as conn:
         st.write("No events yet. Why don't you create one?")
     else:
         for x in cursor.fetchall():
-            st.write(x)
+            st.write(x) # change this
 
 if createpost:
     st.switch_page("pages/create_post.py")

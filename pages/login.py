@@ -3,6 +3,11 @@ import sqlite3
 from db import get_connection
 from time import sleep
 
+st.set_page_config(
+    page_title="Log in to Adventure Board"
+)
+
+
 login_form = st.form(key="login")
 username = login_form.text_input("Username", max_chars=50)
 password = login_form.text_input("Password", type="password")

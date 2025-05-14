@@ -4,6 +4,10 @@ from startup import is_empty
 from db import get_connection
 from time import sleep
 
+st.set_page_config(
+    page_title="Create an Adventure Board account"
+)
+
 account_form = st.form(key="account")
 name = account_form.text_input("Name", placeholder="John Smith")
 username = account_form.text_input("Username")
