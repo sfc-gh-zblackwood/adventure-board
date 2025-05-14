@@ -2,7 +2,6 @@ import streamlit as st
 import sqlite3
 from startup import is_empty
 from db import get_connection
-import config
 from time import sleep
 
 account_form = st.form(key="account")
@@ -27,7 +26,7 @@ if create:
             try:
                 cursor.execute("INSERT INTO Accounts VALUES (?, ?, ?, ?)", (name, username, picture_data, password))
                 conn.commit()
-                config.current_user = username
+                st.session_state.current_user = username
                 st.success("Created your new account!")
                 with st.spinner("Logging in..."):
                     sleep(5)

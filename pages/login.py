@@ -2,7 +2,6 @@ import streamlit as st
 import sqlite3
 from db import get_connection
 from time import sleep
-import config
 
 login_form = st.form(key="login")
 username = login_form.text_input("Username", max_chars=50)
@@ -17,7 +16,7 @@ if log_in:
             st.error("Username or password is incorrect")
         else:
             st.success("Logged in!")
-            config.current_user = username
+            st.session_state.current_user = username
             with st.spinner("Redirecting to home page..."):
                 sleep(5)
             st.switch_page("pages/home.py")
