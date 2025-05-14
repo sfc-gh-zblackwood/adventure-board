@@ -7,6 +7,8 @@ st.set_page_config(
     page_title="Log in to Adventure Board"
 )
 
+if "current_user" not in st.session_state:
+    st.session_state.current_user = None
 
 login_form = st.form(key="login")
 username = login_form.text_input("Username", max_chars=50)
@@ -24,4 +26,4 @@ if log_in:
             st.session_state.current_user = username
             with st.spinner("Redirecting to home page..."):
                 sleep(5)
-            st.switch_page("pages/home.py")
+                st.switch_page("pages/home.py")

@@ -2,6 +2,12 @@ import streamlit as st
 from db import get_connection
 from time import sleep
 
+if "current_user" not in st.session_state:
+    st.session_state.current_user = None
+
+if st.session_state.current_user is None:
+    st.switch_page("startup.py")
+
 if "confirm_delete" not in st.session_state:
     st.session_state.confirm_delete = False
 
@@ -9,6 +15,10 @@ st.set_page_config(
     page_title=f"{st.session_state.current_user}'s Profile - Adventure Board"
 )
 
+sb = st.sidebar
+home = sb.page_link("pages/home.py", label="Home")
+profile = sb.page_link("pages/profile.py", label="Profile")
+log_out = sb.button("Log out")
 
 def delete_account():
     with get_connection() as conn:

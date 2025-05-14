@@ -4,6 +4,9 @@ from db import get_connection
 import time
 import datetime
 
+if "current_user" not in st.session_state:
+    st.session_state.current_user = None
+
 if st.session_state.current_user is None:
     st.switch_page("startup.py")
 
@@ -11,9 +14,13 @@ st.set_page_config(
     page_title="Adventure Board"
 )
 
+def post_container(data):
+    pass
+
 st.write(f"Welcome, {st.session_state.current_user}")
 
 sb = st.sidebar
+home = sb.page_link("pages/home.py", label="Home")
 profile = sb.page_link("pages/profile.py", label="Profile")
 log_out = sb.button("Log out")
 
@@ -25,7 +32,7 @@ if log_out:
 
 createpost = st.button("Create post", key="post_creator")
 
-# display posts as a table for now using a SELECT FROM query
+# display posts using a SELECT FROM query for now
 with get_connection() as conn:
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM Posts")
@@ -34,7 +41,8 @@ with get_connection() as conn:
         st.write("No events yet. Why don't you create one?")
     else:
         for x in cursor.fetchall():
-            st.write(x) # change this
+            st.write(x) # change this later
+
 
 if createpost:
     st.switch_page("pages/create_post.py")

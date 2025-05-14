@@ -8,6 +8,9 @@ st.set_page_config(
     page_title="Create an Adventure Board account"
 )
 
+if "current_user" not in st.session_state:
+    st.session_state.current_user = None
+
 account_form = st.form(key="account")
 name = account_form.text_input("Name", placeholder="John Smith")
 username = account_form.text_input("Username")
