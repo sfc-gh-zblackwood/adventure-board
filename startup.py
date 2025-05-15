@@ -1,17 +1,15 @@
 import streamlit as st
-from db import get_connection
-import sqlite3
-from time import sleep
 
 st.set_page_config(
     page_title="Log in or create an account to see Adventure Board"
 )
 
+from db import get_connection
+import sqlite3
+from time import sleep
+
 if "current_user" not in st.session_state:
     st.session_state.current_user = None
-
-def is_empty(widget):
-    return widget is None or len(widget) == 0 or widget.isspace()
 
 with st.container(border=True):
     col1, col2, col3 = st.columns([0.2, 0.6, 0.2])
@@ -45,13 +43,14 @@ with get_connection() as conn:
     if not posts_exist:
         cursor.execute('''
                     CREATE TABLE IF NOT EXISTS Posts (
-                    title TEXT(50) NOT NULL,
+                    title TEXT NOT NULL,
                     start_date TEXT NOT NULL,
                     end_date TEXT NOT NULL,
                     start_time TEXT NOT NULL,
                     end_time TEXT NOT NULL,
-                    location_name TEXT(50) NOT NULL,
+                    location_name TEXT NOT NULL,
                     location_link TEXT NOT NULL,
+                    details TEXT NOT NULL,
                     creator TEXT NOT NULL
                     );
                     ''')

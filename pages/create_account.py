@@ -1,19 +1,22 @@
 import streamlit as st
-import sqlite3
-from startup import is_empty
-from db import get_connection
-from time import sleep
 
 st.set_page_config(
     page_title="Create an Adventure Board account"
 )
 
+import sqlite3
+from db import get_connection
+from time import sleep
+
 if "current_user" not in st.session_state:
     st.session_state.current_user = None
 
+def is_empty(widget):
+    return widget is None or len(widget) == 0 or widget.isspace()
+
 account_form = st.form(key="account")
 name = account_form.text_input("Name", placeholder="John Smith")
-username = account_form.text_input("Username")
+username = account_form.text_input("Username", max_chars=36)
 profile_picture = account_form.file_uploader("Upload a picture of your beautiful face!", type=["jpg", "jpeg", "png"])
 password = account_form.text_input("Password", type="password")
 create = account_form.form_submit_button("Create Account")

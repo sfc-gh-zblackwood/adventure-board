@@ -1,11 +1,12 @@
 import streamlit as st
-import sqlite3
-from db import get_connection
-from time import sleep
 
 st.set_page_config(
     page_title="Log in to Adventure Board"
 )
+
+import sqlite3
+from db import get_connection
+from time import sleep
 
 if "current_user" not in st.session_state:
     st.session_state.current_user = None

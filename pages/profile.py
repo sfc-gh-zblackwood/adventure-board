@@ -1,4 +1,9 @@
 import streamlit as st
+
+st.set_page_config(
+    page_title=f"{st.session_state.current_user}'s Profile - Adventure Board"
+)
+
 from db import get_connection
 from time import sleep
 
@@ -10,10 +15,6 @@ if st.session_state.current_user is None:
 
 if "confirm_delete" not in st.session_state:
     st.session_state.confirm_delete = False
-
-st.set_page_config(
-    page_title=f"{st.session_state.current_user}'s Profile - Adventure Board"
-)
 
 sb = st.sidebar
 home = sb.page_link("pages/home.py", label="Home")
