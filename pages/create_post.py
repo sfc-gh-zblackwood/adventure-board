@@ -5,7 +5,7 @@ st.set_page_config(
 )
 
 import sqlite3
-from db import get_connection
+from db import get_connection, side_bar
 from time import sleep
 
 if "current_user" not in st.session_state:
@@ -13,6 +13,8 @@ if "current_user" not in st.session_state:
 
 if st.session_state.current_user is None:
     st.switch_page("startup.py")
+
+side_bar()
 
 post_form = st.form(key="post")
 title = post_form.text_input("Title", max_chars=50)
@@ -30,7 +32,7 @@ if create:
     else:
         with get_connection() as conn:
             cursor = conn.cursor()
-            cursor.execute("INSERT INTO Posts VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            cursor.execute("INSERT INTO Posts (title, start_date, end_date, start_time, end_time, location_name, location_link, details, creator) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                            (title,
                             str(start_date),
                             str(end_date),
