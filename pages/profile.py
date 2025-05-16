@@ -1,4 +1,5 @@
 import streamlit as st
+import io
 
 if "current_user" not in st.session_state:
     st.session_state.current_user = None
@@ -18,6 +19,17 @@ if "confirm_delete" not in st.session_state:
 
 side_bar()
 
+st.title(f"{st.session_state.current_user}'s Profile")
+
+col1, col2, col3 = st.columns(3)
+with get_connection() as conn:
+    cursor = conn.cursor()
+    cursor.execute("SELECT profile_pic FROM Accounts WHERE username = ?", (st.session_state.current_user,))
+    data = cursor.fetchone()
+    pic_data = data[0]
+    with col1:
+        image = st.image(pic_data, use_container_width="never")
+
 def delete_account():
     with get_connection() as conn:
         cursor = conn.cursor()
@@ -32,7 +44,7 @@ st.markdown("""<style>.element-container:has(#normal) + div button {
                   color: white;
 }</style>""", unsafe_allow_html=True)
 
-st.markdown("<span class='delete-account'></span>", unsafe_allow_html=True)
+st.markdown("<span class='red'></span>", unsafe_allow_html=True)
 delete_1 = st.button("Delete Account")
 if delete_1:
     st.session_state.confirm_delete = True

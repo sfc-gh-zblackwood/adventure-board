@@ -5,14 +5,11 @@ st.set_page_config(
 )
 
 import sqlite3
-from db import get_connection
+from db import get_connection, is_empty
 from time import sleep
 
 if "current_user" not in st.session_state:
     st.session_state.current_user = None
-
-def is_empty(widget):
-    return widget is None or len(widget) == 0 or widget.isspace()
 
 account_form = st.form(key="account")
 name = account_form.text_input("Name", placeholder="John Smith")
@@ -20,15 +17,17 @@ username = account_form.text_input("Username", max_chars=36)
 profile_picture = account_form.file_uploader("Upload a picture of your beautiful face!", type=["jpg", "jpeg", "png"])
 password = account_form.text_input("Password", type="password")
 create = account_form.form_submit_button("Create Account")
+st.write("Have an account?")
+st.page_link("pages/login.py", label="Login")
 if create:   
     if is_empty(name):
-        st.error("Please write your name")
+        st.error("Please write your real name. We swear, we won't use it for anything else.")
     elif is_empty(username):
-        st.error("Please provide a unique username")
+        st.error("Please provide a unique username.")
     elif profile_picture is None:
-        st.error("Please provide a picture of your face")
+        st.error("Please provide a picture of your (beautiful/handsome/any compliment you prefer) face so we can know you're a real person.")
     elif is_empty(password):
-        st.error("Please provide a password")
+        st.error("Please provide a password.")
     else:
         picture_data = profile_picture.read()
         with get_connection() as conn:
@@ -46,4 +45,4 @@ if create:
                 if "Accounts.username" in error_msg:
                     st.error("That username is already in use.")
                 elif "Accounts.profile_pic" in error_msg:
-                    st.error("That profile picture is already in use.")
+                    st.error("That profile picture is already in use. Is someone stealing your face or are you stealing theirs? :face_with_raised_eyebrow:")

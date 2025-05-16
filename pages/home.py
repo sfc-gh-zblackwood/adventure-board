@@ -7,7 +7,6 @@ st.set_page_config(
 import sqlite3
 from db import get_connection, side_bar, convert_date, convert_time
 import time
-import datetime
 
 if "current_user" not in st.session_state:
     st.session_state.current_user = None
@@ -15,7 +14,7 @@ if "current_user" not in st.session_state:
 if st.session_state.current_user is None:
     st.switch_page("startup.py")
 
-st.write(f"Welcome, {st.session_state.current_user}")
+st.write(f"Welcome, {st.session_state.current_user}!")
 
 side_bar()
 
@@ -41,8 +40,9 @@ with get_connection() as conn:
                 creator_name = "ACCOUNT DELETED"
                 if user_exists:
                     creator_name = user_exists[0]
-                st.markdown(f"**{title}**")
+                st.subheader(f"{title}")
                 st.write(f"{sd} {strt} - {ed} {et}")
+                st.write(f"[{location_name}]({location_link})")
                 st.write(f"Created by {creator} ({creator_name})")
                 st.write(details)
 

@@ -1,5 +1,6 @@
 import streamlit as st
 import sqlite3
+from time import sleep
 
 if "current_user" not in st.session_state:
     st.session_state.current_user = None
@@ -16,7 +17,7 @@ def side_bar():
     if log_out:
         st.session_state.current_user = None
         with st.spinner("Logging out..."):
-            time.sleep(5)
+            sleep(5)
         st.switch_page("startup.py")
 
 def convert_date(date):
@@ -36,3 +37,6 @@ def convert_time(time):
     elif hour == 0:
         hour = 12
     return f"{hour}:{minute} {am_pm}"
+
+def is_empty(widget):
+    return widget is None or len(widget) == 0 or widget.isspace()

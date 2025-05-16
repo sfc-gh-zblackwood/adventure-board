@@ -5,8 +5,9 @@ st.set_page_config(
 )
 
 import sqlite3
-from db import get_connection, side_bar
+from db import get_connection, side_bar, is_empty
 from time import sleep
+import validators
 
 if "current_user" not in st.session_state:
     st.session_state.current_user = None
@@ -27,8 +28,18 @@ location_link = post_form.text_input("Location Link (Google Maps, Waze, etc.)")
 details = post_form.text_area("Details", max_chars=500)
 create = post_form.form_submit_button("Post event!")
 if create:
-    if len(title) == 0 or title.isspace():
-        st.warning("You need a title")
+    if is_empty(title):
+        st.error("You need a title. What's your event called?")
+    elif start_date > end_date:
+        st.error("Your start date comes after your end date. Are you a time traveler?")
+    elif start_date == end_date and start_time > end_time:
+        st.error("Your start time comes after your end time. Are you a time traveler?")
+    elif is_empty(location_name):
+        st.warning("You need a location name. What's the location name?")
+    elif is_empty(location_link) or (not validators.url(location_link)):
+        st.warning("You need a valid link for your location. Where is your location?")
+    elif is_empty(details):
+        st.warning("You need details for your event. What is your event about?")
     else:
         with get_connection() as conn:
             cursor = conn.cursor()

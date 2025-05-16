@@ -15,6 +15,8 @@ login_form = st.form(key="login")
 username = login_form.text_input("Username", max_chars=50)
 password = login_form.text_input("Password", type="password")
 log_in = login_form.form_submit_button("Log in")
+st.write("New here?")
+st.page_link("pages/create_account.py", label="Create an account")
 if log_in:
     with get_connection() as conn:
         cursor = conn.cursor()
