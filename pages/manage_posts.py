@@ -50,4 +50,4 @@ with get_connection() as conn:
                 delete = st.button("Delete", key=f"delete_{ID}")
                 if delete:
                     cursor.execute("DELETE FROM Posts WHERE id = ?", (ID,))
-                    cursor.commit()
+                    conn.commit()
