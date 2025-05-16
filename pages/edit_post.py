@@ -35,14 +35,13 @@ with get_connection() as conn:
     new_details = post_form.text_area("Details", max_chars=500, value=details)
     create = post_form.form_submit_button("Post event!")
     if create:
-        new_ed_object = datetime.strptime(end_date, "%Y-%m-%d").date()
         if is_empty(new_title):
             st.error("You need a title. What's your event called?")
         elif new_start_date > new_end_date:
             st.error("Your start date comes after your end date. Are you a time traveler?")
         elif new_start_date == new_end_date and new_start_time > new_end_time:
             st.error("Your start time comes after your end time. Are you a time traveler?")
-        elif new_ed_object < datetime.now().date():
+        elif new_end_date < datetime.now().date():
             st.warning("Your event ends before today.")
         elif is_empty(new_location_name):
             st.warning("You need a location name. What's the location name?")

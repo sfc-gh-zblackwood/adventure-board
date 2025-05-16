@@ -29,14 +29,13 @@ location_link = post_form.text_input("Location Link (Google Maps, Waze, etc.)")
 details = post_form.text_area("Details", max_chars=500)
 create = post_form.form_submit_button("Post event!")
 if create:
-    ed_object = datetime.strptime(end_date, "%Y-%m-%d").date()
     if is_empty(title):
         st.error("You need a title. What's your event called?")
     elif start_date > end_date:
         st.error("Your start date comes after your end date. Are you a time traveler?")
     elif start_date == end_date and start_time > end_time:
         st.error("Your start time comes after your end time. Are you a time traveler?")
-    elif ed_object < datetime.now().date():
+    elif end_date < datetime.now().date():
         st.warning("Your event ends before today.")
     elif is_empty(location_name):
         st.warning("You need a location name. What's the location name?")
