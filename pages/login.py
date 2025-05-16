@@ -7,6 +7,7 @@ st.set_page_config(
 import sqlite3
 from db import get_connection
 from time import sleep
+import bcrypt
 
 if "current_user" not in st.session_state:
     st.session_state.current_user = None
@@ -20,13 +21,18 @@ st.page_link("pages/create_account.py", label="Create an account")
 if log_in:
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM Accounts WHERE username = ? AND password = ?", (username, password))
+        cursor.execute("SELECT password FROM Accounts WHERE username = ?", (username,))
         conn.commit()
-        if not cursor.fetchone():
-            st.error("Username or password is incorrect")
+        exists = cursor.fetchone()
+        if exists:
+            stored_hash = exists[0]
+            if bcrypt.checkpw(password.encode("utf-8"), stored_hash):
+                st.success("Logged in!")
+                st.session_state.current_user = username
+                with st.spinner("Redirecting to home page..."):
+                    sleep(5)
+                    st.switch_page("pages/home.py")
+            else:
+                st.error("Username or password is incorrect")
         else:
-            st.success("Logged in!")
-            st.session_state.current_user = username
-            with st.spinner("Redirecting to home page..."):
-                sleep(5)
-                st.switch_page("pages/home.py")
+            st.error("Username or password is incorrect")
