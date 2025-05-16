@@ -7,6 +7,7 @@ st.set_page_config(
 import sqlite3
 from db import get_connection, side_bar, convert_date, convert_time
 import time
+from datetime import datetime
 
 if "current_user" not in st.session_state:
     st.session_state.current_user = None
@@ -30,6 +31,11 @@ with get_connection() as conn:
         for x in events:
             with st.container(border=True):
                 ID, title, start_date, end_date, start_time, end_time, location_name, location_link, details, creator = [y for y in x]
+                ed_object = datetime.strptime(end_date, "%Y-%m-%d").date()
+                if ed_object < datetime.now().date():
+                    cursor.execute("DELETE FROM Posts WHERE id = ?", (ID,))
+                    conn.commit()
+                    continue
                 sd = convert_date(start_date)
                 ed = convert_date(end_date)
                 strt = convert_time(start_time)
