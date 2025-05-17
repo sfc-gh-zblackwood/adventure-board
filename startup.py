@@ -28,7 +28,6 @@ with st.container(border=True):
 with get_connection() as conn:
     cursor = conn.cursor()
     accounts_exist = cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='Accounts';").fetchone()
-    conn.commit()
     if not accounts_exist:
         cursor.execute('''
                     CREATE TABLE IF NOT EXISTS Accounts (
@@ -39,7 +38,6 @@ with get_connection() as conn:
         conn.commit()
     
     posts_exist = cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='Posts';").fetchone()
-    conn.commit()
     if not posts_exist:
         cursor.execute('''
                     CREATE TABLE IF NOT EXISTS Posts (
@@ -53,6 +51,19 @@ with get_connection() as conn:
                     location_link TEXT NOT NULL,
                     details TEXT NOT NULL,
                     creator TEXT NOT NULL
+                    );
+                    ''')
+        conn.commit()
+    
+    signups_exists = cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='Signups';").fetchone()
+    if not signups_exists:
+        cursor.execute('''
+                    CREATE TABLE IF NOT EXISTS Signups (
+                    user_id TEXT,
+                    post_id INTEGER,
+                    PRIMARY KEY (user_id, post_id),
+                    FOREIGN KEY (user_id) REFERENCES Accounts(username),
+                    FOREIGN KEY (post_id) REFERENCES POSTS(id)
                     );
                     ''')
         conn.commit()

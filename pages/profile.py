@@ -1,5 +1,4 @@
 import streamlit as st
-import io
 
 if "current_user" not in st.session_state:
     st.session_state.current_user = None

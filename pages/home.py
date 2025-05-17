@@ -50,7 +50,41 @@ with get_connection() as conn:
                 st.write(f"{sd} {strt} - {ed} {et}")
                 st.write(f"[{location_name}]({location_link})")
                 st.write(f"Created by {creator} ({creator_name})")
-                st.write(details)
-
+                with st.expander("Details"):
+                    st.write(details)
+                with st.expander("Attendees"):
+                    cursor.execute("SELECT user_id FROM Signups WHERE post_id = ?", (ID,))
+                    all_attendees = cursor.fetchall()
+                    if all_attendees:
+                        for attendee in all_attendees:
+                            attendee_username = attendee[0]
+                            cursor.execute("SELECT name, profile_pic FROM Accounts WHERE username = ?", (attendee_username,))
+                            attendee_data = cursor.fetchone()
+                            attendee_name, attendee_pic = [x for x in attendee_data]
+                            col1, col2, col3 = st.columns(3)
+                            with col1:
+                                st.image(attendee_pic, width=50)
+                            with col2:
+                                st.write(f"{attendee_username} ({attendee_name})")
+                    else:
+                        st.write("No sign-ups yet. Maybe you can join?")
+                col1, col2 = st.columns(2)
+                own_event = (creator == st.session_state.current_user)
+                with col1:
+                    sign_up = st.button("Sign Up", key=f"sign_up_{ID}", disabled=own_event)
+                    if sign_up:
+                        cursor.execute("INSERT OR IGNORE INTO Signups (user_id, post_id) VALUES (?, ?)", (st.session_state.current_user, ID))
+                        conn.commit()
+                        st.success(f"Signed up for {title}!")
+                        st.rerun()
+                with col2:
+                    leave = st.button("Leave", key=f"leave_{ID}", disabled=own_event)
+                    if leave:
+                        cursor.execute("DELETE FROM Signups WHERE user_id = ? AND post_id = ?", (st.session_state.current_user, ID))
+                        conn.commit()
+                        st.success(f"Left {title}.")
+                        st.rerun()
+                if own_event:
+                    st.write("**This is your event!**")
 if createpost:
     st.switch_page("pages/create_post.py")

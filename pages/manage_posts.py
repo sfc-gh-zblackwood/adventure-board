@@ -39,7 +39,31 @@ with get_connection() as conn:
             st.write(f"{sd} {strt} - {ed} {et}")
             st.write(f"[{location_name}]({location_link})")
             st.write(f"Created by {creator} ({creator_name})")
-            st.write(details)
+            with st.expander("Details"):
+                st.write(details)
+            with st.expander("Attendees"):
+                cursor.execute("SELECT user_id FROM Signups WHERE post_id = ?", (ID,))
+                all_attendees = cursor.fetchall()
+                if all_attendees:
+                    for attendee in all_attendees:
+                        attendee_username = attendee[0]
+                        cursor.execute("SELECT name, profile_pic FROM Accounts WHERE username = ?", (attendee_username,))
+                        attendee_data = cursor.fetchone()
+                        attendee_name, attendee_pic = [x for x in attendee_data]
+                        col1, col2, col3 = st.columns(3)
+                        with col1:
+                            st.image(attendee_pic, width=50)
+                        with col2:
+                            st.write(f"{attendee_username} ({attendee_name})")
+                        with col3:
+                            remove_attendee = st.button(":x:", key=f"remove_{attendee_username}")
+                            if remove_attendee:
+                                cursor.execute("DELETE FROM Signups WHERE user_id = ? AND post_id = ?", (attendee_username, ID))
+                                conn.commit()
+                                st.rerun()
+
+                else:
+                    st.write("No sign-ups yet. Maybe you can join?")
             col1, col2 = st.columns(2)
             with col1:
                 edit = st.button("Edit", key=f"edit_{ID}")
