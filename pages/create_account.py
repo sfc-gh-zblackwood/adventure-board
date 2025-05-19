@@ -15,7 +15,7 @@ if "current_user" not in st.session_state:
 account_form = st.form(key="account")
 name = account_form.text_input("Name", placeholder="John Smith")
 username = account_form.text_input("Username", max_chars=36)
-profile_picture = account_form.file_uploader("Upload a picture of your beautiful face!", type=["jpg", "jpeg", "png"])
+profile_picture = account_form.camera_input("Take a picture of your beautiful face!")
 password = account_form.text_input("Password", type="password")
 create = account_form.form_submit_button("Create Account")
 st.write("Have an account?")
@@ -26,7 +26,7 @@ if create:
     elif is_empty(username):
         st.error("Please provide a unique username.")
     elif profile_picture is None:
-        st.error("Please provide a picture of your (beautiful/handsome/any compliment you prefer) face so we can know you're a real person.")
+        st.error("Please take a picture of your (beautiful/handsome/any compliment you prefer) face so we can know you're a real person.")
     elif is_empty(password):
         st.error("Please provide a password.")
     else:

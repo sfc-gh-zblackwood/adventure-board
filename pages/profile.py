@@ -28,6 +28,17 @@ with get_connection() as conn:
     pic_data = data[0]
     with col1:
         image = st.image(pic_data, use_container_width="never")
+    with col2:
+        update_pfp = st.checkbox("Update profile picture?")
+        new_pfp = st.camera_input("Take a picture of your beautiful face!", disabled=not update_pfp)
+        update_pfp_submit = st.button("Update my profile picture!", disabled=not update_pfp)
+        if update_pfp_submit:
+            new_pfp_data = new_pfp.getvalue()
+            cursor.execute("UPDATE Accounts SET profile_pic = ? WHERE username = ?", (new_pfp_data, st.session_state.current_user))
+            conn.commit()
+            with st.spinner("Updating profile picture..."):
+                sleep(3)
+                st.rerun()
 
 def delete_account():
     with get_connection() as conn:
