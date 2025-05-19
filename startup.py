@@ -61,6 +61,7 @@ with get_connection() as conn:
                     CREATE TABLE IF NOT EXISTS Signups (
                     user_id TEXT,
                     post_id INTEGER,
+                    status TEXT CHECK(status IN ('pending', 'approved', 'rejected')) DEFAULT 'pending',
                     PRIMARY KEY (user_id, post_id),
                     FOREIGN KEY (user_id) REFERENCES Accounts(username),
                     FOREIGN KEY (post_id) REFERENCES POSTS(id)

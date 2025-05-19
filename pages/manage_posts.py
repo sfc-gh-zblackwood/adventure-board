@@ -42,20 +42,30 @@ with get_connection() as conn:
             with st.expander("Details"):
                 st.write(details)
             with st.expander("Attendees"):
-                cursor.execute("SELECT user_id FROM Signups WHERE post_id = ?", (ID,))
+                cursor.execute("SELECT user_id, status FROM Signups WHERE post_id = ?", (ID,))
                 all_attendees = cursor.fetchall()
                 if all_attendees:
                     for attendee in all_attendees:
                         attendee_username = attendee[0]
+                        attendee_status = attendee[1]
                         cursor.execute("SELECT name, profile_pic FROM Accounts WHERE username = ?", (attendee_username,))
                         attendee_data = cursor.fetchone()
                         attendee_name, attendee_pic = [x for x in attendee_data]
-                        col1, col2, col3 = st.columns(3)
+                        col1, col2, col3, col4 = st.columns(4)
                         with col1:
                             st.image(attendee_pic, width=50)
                         with col2:
-                            st.write(f"{attendee_username} ({attendee_name})")
+                            if attendee_status == "pending":
+                                st.write(f":orange[{attendee_username} ({attendee_name})]")
+                            else:
+                                st.write(f"{attendee_username} ({attendee_name})")
                         with col3:
+                            approve_attendee = st.button(":white_check_mark:", key=f"approve_{attendee_username}")
+                            if approve_attendee:
+                                cursor.execute("UPDATE Signups SET status = 'approved' WHERE user_id = ? AND post_id = ?", (attendee_username, ID))
+                                conn.commit()
+                                st.rerun()
+                        with col4:
                             remove_attendee = st.button(":x:", key=f"remove_{attendee_username}")
                             if remove_attendee:
                                 cursor.execute("DELETE FROM Signups WHERE user_id = ? AND post_id = ?", (attendee_username, ID))

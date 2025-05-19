@@ -53,7 +53,7 @@ with get_connection() as conn:
                 with st.expander("Details"):
                     st.write(details)
                 with st.expander("Attendees"):
-                    cursor.execute("SELECT user_id FROM Signups WHERE post_id = ?", (ID,))
+                    cursor.execute("SELECT user_id FROM Signups WHERE post_id = ? AND status = ?", (ID, "approved"))
                     all_attendees = cursor.fetchall()
                     if all_attendees:
                         for attendee in all_attendees:
@@ -73,17 +73,15 @@ with get_connection() as conn:
                 with col1:
                     sign_up = st.button("Sign Up", key=f"sign_up_{ID}", disabled=own_event)
                     if sign_up:
-                        cursor.execute("INSERT OR IGNORE INTO Signups (user_id, post_id) VALUES (?, ?)", (st.session_state.current_user, ID))
+                        cursor.execute("INSERT OR IGNORE INTO Signups (user_id, post_id, status) VALUES (?, ?, ?)", (st.session_state.current_user, ID, "pending"))
                         conn.commit()
-                        st.success(f"Signed up for {title}!")
-                        st.rerun()
+                        st.info(f"Your sign-up for {title} is pending approval.")
                 with col2:
                     leave = st.button("Leave", key=f"leave_{ID}", disabled=own_event)
                     if leave:
                         cursor.execute("DELETE FROM Signups WHERE user_id = ? AND post_id = ?", (st.session_state.current_user, ID))
                         conn.commit()
-                        st.success(f"Left {title}.")
-                        st.rerun()
+                        st.info(f"Left {title}.")
                 if own_event:
                     st.write("**This is your event!**")
 if createpost:
