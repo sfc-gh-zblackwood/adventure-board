@@ -79,7 +79,7 @@ with get_connection() as conn:
                 edit = st.button("Edit", key=f"edit_{ID}")
                 if edit:
                     st.session_state.current_post = ID
-                    st.switch_page("pages/edit_post.py")
+                    st.switch_page("pages/edit-post.py")
             with col2:
                 delete = st.button("Delete", key=f"delete_{ID}")
                 if delete:

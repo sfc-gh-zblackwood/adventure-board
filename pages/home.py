@@ -85,4 +85,4 @@ with get_connection() as conn:
                 if own_event:
                     st.write("**This is your event!**")
 if createpost:
-    st.switch_page("pages/create_post.py")
+    st.switch_page("pages/create-post.py")

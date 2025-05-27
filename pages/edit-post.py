@@ -5,6 +5,13 @@ st.set_page_config(
 )
 
 from db import get_connection, side_bar, convert_date, convert_time, is_empty
+
+if "current_user" not in st.session_state:
+    st.session_state.current_user = None
+
+if st.session_state.current_user is None:
+    st.switch_page("startup.py")
+
 from datetime import datetime
 import validators
 from time import sleep
