@@ -24,6 +24,9 @@ with get_connection() as conn:
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM Posts WHERE creator = ?", (st.session_state.current_user,))
     events = cursor.fetchall()
+    create_post = st.button("Create post", key="post_creator")
+    if create_post:
+        st.switch_page("pages/create-post.py")
     if not events:
         st.write("You don't have any posts yet.")
     else:

@@ -19,8 +19,6 @@ st.write(f"Welcome, {st.session_state.current_user}!")
 
 side_bar()
 
-createpost = st.button("Create post", key="post_creator")
-
 with get_connection() as conn:
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM Posts")
@@ -84,5 +82,3 @@ with get_connection() as conn:
                         st.info(f"Left {title}.")
                 if own_event:
                     st.write("**This is your event!**")
-if createpost:
-    st.switch_page("pages/create-post.py")
