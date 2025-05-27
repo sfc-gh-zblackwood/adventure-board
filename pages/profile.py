@@ -7,7 +7,7 @@ st.set_page_config(
     page_title=f"{st.session_state.current_user}'s Profile - Adventure Board"
 )
 
-from db import get_connection, side_bar
+from db import get_connection, side_bar, is_empty
 from time import sleep
 import sqlite3
 
@@ -29,39 +29,59 @@ st.title(f"{st.session_state.current_user}'s Profile")
 col1, col2, col3 = st.columns(3)
 with get_connection() as conn:
     cursor = conn.cursor()
-    cursor.execute("SELECT profile_pic FROM Accounts WHERE username = ?", (st.session_state.current_user,))
+    cursor.execute("SELECT name, profile_pic FROM Accounts WHERE username = ?", (st.session_state.current_user,))
     data = cursor.fetchone()
-    pic_data = data[0]
+    name, pic_data = [x for x in data]
     with col1:
         image = st.image(pic_data, use_container_width="never")
+    new_details = st.form(key="new-details")
+    new_name = new_details.text_input("Name", placeholder="John Smith", value=name)
+    new_username = new_details.text_input("Username", max_chars=36, value=st.session_state.current_user)
+    new_pfp = new_details.file_uploader("Upload new profile picture?", type=["jpg", "jpeg", "png"])
+    new_password = new_details.text_input("Password", type="password")
+    update_details = new_details.form_submit_button("Update profile details")
     with col2:
-        new_pfp = st.file_uploader("Upload new profile picture?", type=["jpg", "jpeg", "png"])
-        update_pfp_submit = st.button("Update my profile picture!")
-        match_result = 0
-        if update_pfp_submit:
-            new_pfp_data = new_pfp.getvalue()
-            image1 = face_recognition.load_image_file(io.BytesIO(pic_data))
-            image2 = face_recognition.load_image_file(io.BytesIO(new_pfp_data))
-            face_encodings1 = face_recognition.face_encodings(image1)
-            face_encodings2 = face_recognition.face_encodings(image2)
-            if len(face_encodings1) == 0 or len(face_encodings2) == 0:
-                st.error("Could not detect faces in one or both images.")
-            else:
-                match_result = face_recognition.compare_faces([face_encodings1[0]], face_encodings2[0], tolerance=0.5)
-                if match_result[0]:
-                    st.success("They match!")
-                    try:
-                        cursor.execute("UPDATE Accounts SET profile_pic = ? WHERE username = ?", (new_pfp_data, st.session_state.current_user))
-                        conn.commit()
-                        with st.spinner("Updating profile picture..."):
-                            sleep(3)
-                            st.rerun()
-                    except sqlite3.IntegrityError as e:
-                        error_msg = str(e)
-                        if "Accounts.profile_pic" in error_msg:
-                            st.error("That profile picture is already in use. Is someone stealing your face or are you stealing theirs? :face_with_raised_eyebrow:")
+        if update_details:
+            if new_username != st.session_state.current_user and not is_empty(new_username):
+                try:
+                    cursor.execute("UPDATE Accounts SET username = ? WHERE username = ?", (new_username, st.session_state.current_user))
+                    conn.commit()
+                    st.session_state.current_user = new_username
+                except sqlite3.IntegrityError as e:
+                    msg = str(e)
+                    if "Accounts.username" in msg:
+                        st.error("Someone is already using this username.")
+            if new_name != name and not is_empty(new_name):
+                cursor.execute("UPDATE Accounts SET name = ? WHERE username = ?", (new_name, st.session_state.current_user))
+                conn.commit()
+            if not is_empty(new_password):
+                cursor.execute("UPDATE Accounts SET password = ? WHERE username = ?", (new_password, st.session_state.current_user))
+                conn.commit()
+            if new_pfp:
+                match_result = 0
+                new_pfp_data = new_pfp.getvalue()
+                image1 = face_recognition.load_image_file(io.BytesIO(pic_data))
+                image2 = face_recognition.load_image_file(io.BytesIO(new_pfp_data))
+                face_encodings1 = face_recognition.face_encodings(image1)
+                face_encodings2 = face_recognition.face_encodings(image2)
+                if len(face_encodings1) == 0 or len(face_encodings2) == 0:
+                    st.error("Could not detect faces in one or both images.")
                 else:
-                    st.error("Faces don't match.")
+                    match_result = face_recognition.compare_faces([face_encodings1[0]], face_encodings2[0], tolerance=0.5)
+                    if match_result[0]:
+                        st.success("They match!")
+                        try:
+                            cursor.execute("UPDATE Accounts SET profile_pic = ? WHERE username = ?", (new_pfp_data, st.session_state.current_user))
+                            conn.commit()
+                            with st.spinner("Updating profile picture..."):
+                                sleep(3)
+                                st.rerun()
+                        except sqlite3.IntegrityError as e:
+                            error_msg = str(e)
+                            if "Accounts.profile_pic" in error_msg:
+                                st.error("That profile picture is already in use. Is someone stealing your face or are you stealing theirs? :face_with_raised_eyebrow:")
+                    else:
+                        st.error("Faces don't match.")
 
 def delete_account():
     with get_connection() as conn:

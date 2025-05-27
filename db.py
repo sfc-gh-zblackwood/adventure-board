@@ -12,7 +12,7 @@ def side_bar():
     sb = st.sidebar
     home = sb.page_link("pages/home.py", label="Home")
     profile = sb.page_link("pages/profile.py", label="Profile")
-    manage_posts = sb.page_link("pages/manage_posts.py", label="Manage Posts")
+    manage_posts = sb.page_link("pages/manage-posts.py", label="Manage Posts")
     log_out = sb.button("Log out")
     if log_out:
         st.session_state.current_user = None
