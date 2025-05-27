@@ -15,11 +15,14 @@ if "current_user" not in st.session_state:
 account_form = st.form(key="account")
 name = account_form.text_input("Name", placeholder="John Smith")
 username = account_form.text_input("Username", max_chars=36)
+email = account_form.text_input("Email (optional)")
 profile_picture = account_form.camera_input("Take a picture of your beautiful face!")
 password = account_form.text_input("Password", type="password")
 create = account_form.form_submit_button("Create Account")
 st.write("Have an account?")
 st.page_link("pages/login.py", label="Login")
+st.write("or")
+login_google = st.button("Login with Google", on_click=st.login)
 if create:   
     if is_empty(name):
         st.error("Please write your real name. We swear, we won't use it for anything else.")
@@ -48,3 +51,10 @@ if create:
                     st.error("That username is already in use.")
                 elif "Accounts.profile_pic" in error_msg:
                     st.error("That profile picture is already in use. Is someone stealing your face or are you stealing theirs? :face_with_raised_eyebrow:")
+
+if login_google:
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("INSERT OR REPLACE INTO Accounts (name, email) VALUES (?, ?)", (st.user.name, st.user.email))
+        conn.commit()
+        

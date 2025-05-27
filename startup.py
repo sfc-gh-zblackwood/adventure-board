@@ -23,7 +23,7 @@ with st.container(border=True):
         st.switch_page("pages/login.py")
     
     if create_account_button:
-        st.switch_page("pages/create_account.py")
+        st.switch_page("pages/create-account.py")
 
 with get_connection() as conn:
     cursor = conn.cursor()
@@ -33,6 +33,7 @@ with get_connection() as conn:
                     CREATE TABLE IF NOT EXISTS Accounts (
                     name TEXT NOT NULL,
                     username TEXT NOT NULL UNIQUE,
+                    email TEXT UNIQUE,
                     profile_pic BLOB NOT NULL UNIQUE,
                     password BLOB NOT NULL);''')
         conn.commit()

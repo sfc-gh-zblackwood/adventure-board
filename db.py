@@ -16,6 +16,7 @@ def side_bar():
     log_out = sb.button("Log out")
     if log_out:
         st.session_state.current_user = None
+        st.logout
         with st.spinner("Logging out..."):
             sleep(5)
         st.switch_page("startup.py")
