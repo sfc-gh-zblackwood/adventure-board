@@ -33,8 +33,9 @@ with get_connection() as conn:
                     CREATE TABLE IF NOT EXISTS Accounts (
                     name TEXT NOT NULL,
                     username TEXT NOT NULL UNIQUE,
-                    profile_pic BLOB UNIQUE,
-                    password BLOB);''')
+                    email TEXT UNIQUE,
+                    profile_pic BLOB NOT NULL UNIQUE,
+                    password BLOB NOT NULL);''')
         conn.commit()
     
     posts_exist = cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='Posts';").fetchone()
